@@ -34,8 +34,46 @@ def get_data(number, web3):
     submission["timeSinceLastBlock"] = web3.eth.getBlock(number-1)['timestamp'] - submission["blockTimestamp"]
     submission["blockSize"] = block['size'] #Integer the size of this block in bytes.
     submission["blockGasUsed"] = block['gasUsed']
+
+
+    #tx stats
+    # 
+    totalGasFee = 0 #gwei
+    gasPriceList = []
+    uniqueActors = set()
+    submission["SuccessfulTx"] = 0 # receipt status 1
+    submission["FailedTx"] = 0 # receipt status 0
+    
+    for transaction in block['transactions']:
+        try:
+            tx = web3.eth.getTransaction(transaction)
+            receipt = web3.eth.waitForTransactionReceipt(transaction)
+            text = "All ok!"
+            status_code = 200
+
+        except Exception as e:
+            text = str(e)
+            status_code = "888"
+            return text, status_code, submission
+            #example reverted 0x68d019917d9d3b1162899d2495413be5f70e7fbd2175157062d0c1f4115465ef 
+            #example successful 
+            # 
+        totalGasFee += tx['gasPrice']*receipt['gasUsed'] #gas price * gas used = gas payed
+        #Check this line
+        gasPriceList.append(tx[''])
+        uniqueActors.add(tx['from'])
+        uniqueActors.add(tx['to'])
+        
+    submission["TxCount"] = len(block['transactions'])
+    if gasPriceList:
+        submission["TxGasPriceMin"] = min(gasPriceList)
+        submission["TxGasPriceMax"] = max(gasPriceList)
+        submission["TxGasPriceMean"] = numpy.mean(gasPriceList)
+        submission["TxGasPriceSkew"] = stats.skew(gasPriceList)
+
     
     return text, status_code, submission
+
 
 def get_all_transactions(number, rpc):
     submission = {}
