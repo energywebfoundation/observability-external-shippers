@@ -58,17 +58,24 @@ def get_data(number, web3):
             #example reverted 0x68d019917d9d3b1162899d2495413be5f70e7fbd2175157062d0c1f4115465ef 
             #example successful 
             # 
+        if receipt['status'] == 1:
+            submission["SuccessfulTx"] += 1
+        else:
+            submission["FailedTx"] += 1
+
         totalGasFee += tx['gasPrice']*receipt['gasUsed'] #gas price * gas used = gas payed
         #Check this line
-        gasPriceList.append(tx[''])
+        gasPriceList.append(tx['gasPrice'])
         uniqueActors.add(tx['from'])
         uniqueActors.add(tx['to'])
         
     submission["TxCount"] = len(block['transactions'])
+    submission["TxUniqueActors"] = len(uniqueActors)
     if gasPriceList:
         submission["TxGasPriceMin"] = min(gasPriceList)
         submission["TxGasPriceMax"] = max(gasPriceList)
         submission["TxGasPriceMean"] = numpy.mean(gasPriceList)
+        submission["TxGasPriceWeightedMean"] = totalGasFee / block['gasUsed']
         submission["TxGasPriceSkew"] = stats.skew(gasPriceList)
 
     

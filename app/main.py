@@ -11,7 +11,6 @@ from Service import Resource
 
 #add dynamodb or alternative storage - tfe user additional policy attachment
 #add secretstore
-#add rest of logic
 #add elastic shipper
 #add cloudwatch shipper
 #add k8s deployment
