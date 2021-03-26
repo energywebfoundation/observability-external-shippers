@@ -13,7 +13,20 @@ class HexJsonEncoder(json.JSONEncoder):
             return obj.hex()
         return super().default(obj)
 
-
+def get_last_block(web3):
+    block_number = 1
+    try:
+        block = web3.eth.get_block('latest')
+        text = "Got the latest block"
+        status_code = 200
+        block_number = block['number']
+    except Exception as e:
+        text = str(e)
+        status_code = "888"
+        return text, status_code, 
+    
+    return text, status_code, block_number
+    
 def get_data(number, web3):
 
     submission = {}
