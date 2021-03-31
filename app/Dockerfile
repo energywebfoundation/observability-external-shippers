@@ -2,7 +2,7 @@ FROM python
 
 RUN mkdir /app
 WORKDIR /app
-ADD . /app/
+ADD ./app /app/
 RUN ls -la
 RUN pip install -r requirements.txt
 
