@@ -19,9 +19,6 @@ jobs:
 
     - name: Checkout
       uses: actions/checkout@v2
-      
-    - name: Choose proper config
-      run: cp src/config/config.local.ts src/config/config.ts
     
     - name: Get the tag version
       id: get_version
