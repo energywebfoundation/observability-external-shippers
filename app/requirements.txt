@@ -1,3 +1,7 @@
 Flask
+requests
 Web3
 hexbytes
+influxdb-client
+numpy
+scipy

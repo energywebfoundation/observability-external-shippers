@@ -1,8 +1,4 @@
 import requests
-from web3 import Web3
-import json
-from hexbytes import HexBytes
-
 
 class Resource:
 
@@ -39,7 +35,7 @@ class Resource:
             status_code = "888"
             text = str(e)
 
-        return status_code, text
+        return text, status_code
 
     def delete_resource(self):
 
@@ -53,21 +49,21 @@ class Resource:
             status_code = "888"
             text = str(e)
 
-        return status_code, text
+        return text, status_code
 
     def post(self, body):
 
         """POST body via http request"""
 
         try:
-            response = requests.request("POST", self.url, headers=self.headers, data=body)
+            response = requests.request("POST", self.url, headers=self.headers, json=body)
             status_code = response.status_code
             text = response.text
         except Exception as e:
             status_code = "888"
             text = str(e)
 
-        return status_code, text
+        return text, status_code
 
     def put(self, body):
 
@@ -81,30 +77,4 @@ class Resource:
             status_code = "888"
             text = str(e)
 
-        return status_code, text
-
-class HexJsonEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, HexBytes):
-            return obj.hex()
-        return super().default(obj)
-
-
-def main():
-    web3 = Web3(Web3.HTTPProvider("http://3.235.186.90:80"))
-    n=50
-    block = web3.eth.getBlock(n)
-    block_dict = dict(block)
-    result = {
-        "result": block_dict
-    }
-    block_json = json.dumps(block_dict,cls=HexJsonEncoder)
-
-    result = {
-        "result": block_json
-    }
-
-    return print(result)
-
-if __name__ == "__main__":
-    main()
+        return text, status_code
