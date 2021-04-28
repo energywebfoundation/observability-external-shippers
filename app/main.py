@@ -20,7 +20,7 @@ from Service import Resource
 #general variables
 app = Flask(__name__)
 rpc_url = "http://3.235.186.90:80"
-auth_key = "asoidewfoef"
+auth_key = "asoidewfoefxxx!"
 
 #Get block class
 web3 = Web3(Web3.HTTPProvider(rpc_url))
@@ -42,10 +42,10 @@ logger.setLevel(log_level)
 #logging.basicConfig(level=LOGGING_LEVEL)
 
 # Variables influx
-influx_url = "http://18.197.54.173:8086"
-influx_bucket_id = "eww_buckett"
+influx_url = "http://52.4.105.66:8086"
+influx_bucket_id = "ewc_data"
 influx_token = ""
-influx_org = "eww_organization"
+influx_org = "EnergyWeb"
 
 def iteration_start(number):
     global stop_run
