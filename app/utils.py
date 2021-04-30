@@ -23,7 +23,7 @@ def get_last_block(web3):
     except Exception as e:
         text = str(e)
         status_code = "888"
-        return text, status_code, 
+        return text, status_code, block_number
     
     return text, status_code, block_number
     
