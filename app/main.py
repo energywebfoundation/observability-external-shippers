@@ -20,7 +20,7 @@ from Service import Resource
 #general variables
 app = Flask(__name__)
 rpc_url = "http://3.235.186.90:80"
-auth_key = "asoidewfoefxxx!"
+auth_key = ""
 
 #Get block class
 web3 = Web3(Web3.HTTPProvider(rpc_url))
