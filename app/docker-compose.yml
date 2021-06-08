@@ -1,5 +1,7 @@
 observability:
-  image: observability-external:1.0.7
+  image: observability-external:2.0.0
   container_name: observability
   ports:
     - "5000:5000"
+  env_file:
+    - .env

@@ -1,28 +1,25 @@
 import json
-from hexbytes import HexBytes
 import time
-import influxdb_client
 import numpy
 from scipy import stats
-from influxdb_client.client.write_api import SYNCHRONOUS
 
+#Const.
+HTTP_CODE_ERROR = 500
+HTTP_CODE_BAD_REQUEST = 401
+HTTP_CODE_OK = 200
 
-class HexJsonEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, HexBytes):
-            return obj.hex()
-        return super().default(obj)
 
 def get_last_block(web3):
     block_number = 1
     try:
         block = web3.eth.get_block('latest')
         text = "Got the latest block"
-        status_code = 200
+        status_code = HTTP_CODE_OK
         block_number = block['number']
     except Exception as e:
         text = str(e)
-        status_code = "888"
+        status_code = HTTP_CODE_ERROR
+
         return text, status_code, block_number
     
     return text, status_code, block_number
@@ -33,10 +30,11 @@ def get_data(number, web3):
     try:
         block = web3.eth.getBlock(number)
         text = "All ok!"
-        status_code = 200
+        status_code = HTTP_CODE_OK
     except Exception as e:
         text = str(e)
-        status_code = "888"
+        status_code = HTTP_CODE_ERROR
+
         return text, status_code, submission
     
     submission["blockNumber"] = number
@@ -62,15 +60,14 @@ def get_data(number, web3):
             tx = web3.eth.getTransaction(transaction)
             receipt = web3.eth.waitForTransactionReceipt(transaction)
             text = "All ok!"
-            status_code = 200
+            status_code = HTTP_CODE_OK
 
         except Exception as e:
             text = str(e)
-            status_code = "888"
+            status_code = HTTP_CODE_ERROR
+
             return text, status_code, submission
-            #example reverted 0x68d019917d9d3b1162899d2495413be5f70e7fbd2175157062d0c1f4115465ef 
-            #example successful 
-            # 
+
         if receipt['status'] == 1:
             submission["SuccessfulTx"] += 1
         else:
@@ -91,7 +88,6 @@ def get_data(number, web3):
         submission["TxGasPriceWeightedMean"] = totalGasFee / block['gasUsed']
         submission["TxGasPriceSkew"] = stats.skew(gasPriceList)
 
-    
     return text, status_code, submission
 
 
@@ -108,7 +104,7 @@ def get_all_transactions(number, rpc):
     }
 
     text, status_code = rpc.post(parity_body)
-    if status_code != "888":
+    if status_code != HTTP_CODE_ERROR:
         
         result_dict_all_transactions = json.loads(text)["result"]
 
@@ -123,41 +119,4 @@ def get_all_transactions(number, rpc):
     return text, status_code, submission
 
 
-def data_prepare_influx(influx_payload):
 
-    #influx data structure
-    influx_dict_structure = {
-        "measurement":"authorOfBlock",
-        "fields": influx_payload
-    }
-
-    #print structure
-    structure_to_print = json.dumps(influx_dict_structure,cls=HexJsonEncoder)
-
-    return influx_dict_structure, structure_to_print
-
-
-def send_to_influx(influx_payload, influx_url, influx_bucket_id, influx_token, influx_org):
-    
-    client = influxdb_client.InfluxDBClient(
-        url=influx_url,
-        token=influx_token,
-        org=influx_org
-    )
-
-    write_api = client.write_api(
-        write_options=SYNCHRONOUS
-    )
-    try:
-        write_api.write(bucket=influx_bucket_id, record=influx_payload)
-        text = "Data send"
-        status_code = 200
-    except Exception as e:
-        text = str(e)
-        status_code = 500
-
-    #clossing connections
-    write_api.close()
-    client.close()
-
-    return text, status_code
