@@ -1,5 +1,5 @@
 observability:
-  image: observability-external:2.0.0
+  image: observability-external:2.0.1
   container_name: observability
   ports:
     - "5000:5000"
