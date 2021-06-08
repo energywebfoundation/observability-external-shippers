@@ -1,6 +1,6 @@
 import requests
 
-class Resource:
+class Http_requests:
 
     def __init__(self, url, token, authorization="Basic", payload={}, headers={}):
         self.url = url
