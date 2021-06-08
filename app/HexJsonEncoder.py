@@ -1,5 +1,6 @@
 
 from hexbytes import HexBytes
+import json
 
 
 class HexJsonEncoder(json.JSONEncoder):
@@ -7,5 +8,5 @@ class HexJsonEncoder(json.JSONEncoder):
         if isinstance(obj, HexBytes):
 
             return obj.hex()
-            
+
         return super().default(obj)
